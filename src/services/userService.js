@@ -23,7 +23,7 @@ let handleUserLogin = (email, password) => {
       if (isExist) {
         // neesu user ton tai
         let user = await db.User.findOne({
-          attributes: ["email", "roleid", "password"],
+          attributes: ["email", "roleid", "password", "firstName", "lastName"],
           where: { email: email },
           raw: true, //trả về dạng object
         });
@@ -110,8 +110,7 @@ let createNewUser = (data) => {
           errCode: 1,
           errMessage: "Your email is already in used, Plz try another email !",
         });
-      }
-      else{
+      } else {
         let hashPasswordFromBcrypt = await hashUserPassword(data.password);
         await db.User.create({
           email: data.email,
@@ -120,15 +119,15 @@ let createNewUser = (data) => {
           lastName: data.lastName,
           address: data.address,
           phonenumber: data.phonenumber,
-          gender: data.gender === "1" ? true : false,
+          gender: data.gender,
           roleId: data.roleId,
+          positionId: data.positionId,
         });
         resolve({
           errCode: 0,
           message: "oke",
         });
       }
-   
     } catch (error) {
       reject(error);
     }
@@ -160,15 +159,15 @@ let deleteUser = (userId) => {
 let updateUserData = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
-        if(!data.id){
-            resolve({
-                errCode:2,
-                errMessage:'missing required parameters'
-            })
-        }
+      if (!data.id) {
+        resolve({
+          errCode: 2,
+          errMessage: "missing required parameters",
+        });
+      }
       let user = await db.User.findOne({
         where: { id: data.id },
-        raw: false
+        raw: false,
       });
       if (user) {
         user.firstName = data.firstName;
@@ -193,33 +192,28 @@ let updateUserData = (data) => {
   });
 };
 
-
-
-let getAllCodeService =(typeInput)=>{
-  return new Promise ( async (resolve, reject) =>{
+let getAllCodeService = (typeInput) => {
+  return new Promise(async (resolve, reject) => {
     try {
-      if(!typeInput)
-      {
+      if (!typeInput) {
         resolve({
           errCode: 1,
-          errMessage:"Missing require Parameters"
-        })
-      }else{
+          errMessage: "Missing require Parameters",
+        });
+      } else {
         let res = {};
         let allcode = await db.Allcode.findAll({
-          where:{type:typeInput}
+          where: { type: typeInput },
         });
         res.errCode = 0;
         res.data = allcode;
         resolve(res);
       }
-
-
-    } catch (e) { 
+    } catch (e) {
       reject(e);
     }
-  })
-} 
+  });
+};
 
 module.exports = {
   handleUserLogin: handleUserLogin,
@@ -227,5 +221,5 @@ module.exports = {
   createNewUser: createNewUser,
   deleteUser: deleteUser,
   updateUserData: updateUserData,
-  getAllCodeService:getAllCodeService
+  getAllCodeService: getAllCodeService,
 };
