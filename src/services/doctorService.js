@@ -85,8 +85,49 @@ let saveDetailsInforDoctor = (inputData) => {
   });
 };
 
+let getDetailDoctorByIdService = (inputId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!inputId) {
+        resolve({
+          errCode: -1,
+          errMessage: "missing required parameters",
+        });
+      } else {
+        let data = await db.User.findOne({
+          where: { id: inputId },
+          attributes: {
+            exclude: ["password", "image"],
+          },
+          include: [
+            {
+              model: db.MarkDown,
+              attributes: ["description", "contentHTML", "contentMarkdown"],
+            },
+
+            {
+              model: db.Allcode,
+              as: "positionData",
+              attributes: ["valueEn", "valueVi"],
+            },
+          ],
+
+          raw: true,
+          nest: true,
+        });
+        resolve({
+          errCode: 0,
+          data: data,
+        });
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
 module.exports = {
   getTopDoctorHome: getTopDoctorHome,
   getAllDoctors: getAllDoctors,
   saveDetailsInforDoctor: saveDetailsInforDoctor,
+  getDetailDoctorByIdService: getDetailDoctorByIdService,
 };
