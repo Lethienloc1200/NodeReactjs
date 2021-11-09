@@ -2,9 +2,9 @@ import doctorService from "../services/doctorService";
 
 let getTopDoctorHome = async (req, res) => {
   let limit = req.query.limit;
-  if (!limit) limit = 10;
+  if (!limit) limit = 6;
   try {
-    let response = await doctorService.getTopDoctorHome(+limit);
+    let response = await doctorService.getTopDoctorHomeService(+limit);
     return res.status(200).json(response);
   } catch (error) {
     console.error(error);
@@ -39,8 +39,22 @@ let postInforDoctors = async (req, res) => {
     });
   }
 };
+let getDetailDoctorById = async (req, res) => {
+  try {
+    let inforDetail = await doctorService.getDetailDoctorByIdService(
+      req.query.id
+    );
+    return res.status(200).json(inforDetail);
+  } catch (error) {
+    return res.status(200).json({
+      errCode: -1,
+      errMessage: "err from server get doctor details",
+    });
+  }
+};
 module.exports = {
   getAllDoctors: getAllDoctors,
   getTopDoctorHome: getTopDoctorHome,
   postInforDoctors: postInforDoctors,
+  getDetailDoctorById: getDetailDoctorById,
 };

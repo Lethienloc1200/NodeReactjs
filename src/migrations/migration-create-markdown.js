@@ -20,7 +20,7 @@ module.exports = {
         allowNull: true,
         type: Sequelize.TEXT("long"),
       },
-      doctorID: {
+      doctorId: {
         allowNull: true,
         type: Sequelize.INTEGER,
       },
