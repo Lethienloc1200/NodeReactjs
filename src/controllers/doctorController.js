@@ -2,7 +2,7 @@ import doctorService from "../services/doctorService";
 
 let getTopDoctorHome = async (req, res) => {
   let limit = req.query.limit;
-  if (!limit) limit = 6;
+  if (!limit) limit = 10;
   try {
     let response = await doctorService.getTopDoctorHomeService(+limit);
     return res.status(200).json(response);
@@ -52,9 +52,40 @@ let getDetailDoctorById = async (req, res) => {
     });
   }
 };
+
+let bulkCreateSchedule = async (req, res) => {
+  try {
+    let infor = await doctorService.bulkCreateScheduleService(req.body);
+    return res.status(200).json(infor);
+  } catch (error) {
+    return res.status(200).json({
+      errCode: -1,
+      errMessage: "err from server get doctor details",
+    });
+  }
+};
+let getScheduleDoctorByDate = async (req, res) => {
+  try {
+    let infor = await doctorService.getScheduleByDateService(
+      req.query.doctorId,
+      req.query.date
+    );
+    return res.status(200).json({
+      infor,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(200).json({
+      errCode: -1,
+      errMessage: "err from server get doctor details",
+    });
+  }
+};
 module.exports = {
   getAllDoctors: getAllDoctors,
   getTopDoctorHome: getTopDoctorHome,
   postInforDoctors: postInforDoctors,
   getDetailDoctorById: getDetailDoctorById,
+  bulkCreateSchedule: bulkCreateSchedule,
+  getScheduleDoctorByDate: getScheduleDoctorByDate,
 };
